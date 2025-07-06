@@ -183,9 +183,20 @@ export function ArcoTrackProvider({ children }: { children: ReactNode }) {
 
   // Update user state when authentication changes
   useEffect(() => {
-    console.log('Auth state change detected:', { isAuthenticated, profile: !!profile, authLoading });
+    console.log('[ArcoTrackContext] 🔄 Auth state change detected:', { 
+      isAuthenticated, 
+      hasProfile: !!profile, 
+      authLoading,
+      profileEmail: profile?.email || 'N/A',
+      currentState: {
+        isLoggedIn: state.isLoggedIn,
+        loading: state.loading,
+        telaAtual: state.telaAtual
+      }
+    });
     
     if (authLoading) {
+      console.log('[ArcoTrackContext] ⏳ Auth ainda carregando, definindo loading como true');
       setState(prev => ({
         ...prev,
         loading: true,
@@ -194,7 +205,7 @@ export function ArcoTrackProvider({ children }: { children: ReactNode }) {
     }
     
     if (isAuthenticated && profile) {
-      console.log('Setting user as logged in, redirecting to home');
+      console.log('[ArcoTrackContext] ✅ Setting user as logged in, redirecting to home');
       setState(prev => ({
         ...prev,
         usuario: convertProfileToUsuario(profile),
@@ -202,8 +213,9 @@ export function ArcoTrackProvider({ children }: { children: ReactNode }) {
         telaAtual: prev.telaAtual === 'login' ? 'home' : prev.telaAtual,
         loading: false,
       }));
+      console.log('[ArcoTrackContext] ✅ Estado definido como LOGADO');
     } else {
-      console.log('Setting user as logged out');
+      console.log('[ArcoTrackContext] ❌ Setting user as logged out');
       setState(prev => ({
         ...prev,
         usuario: null,
@@ -213,8 +225,26 @@ export function ArcoTrackProvider({ children }: { children: ReactNode }) {
         loading: false,
       }));
       setTreinoAtualId(null);
+      console.log('[ArcoTrackContext] ✅ Estado definido como NÃO LOGADO');
     }
   }, [isAuthenticated, profile, authLoading]);
+
+  // Add a timeout to prevent infinite loading
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (authLoading) {
+        console.log('[ArcoTrackContext] ⏰ TIMEOUT no loading de auth (15s), forçando estado não autenticado');
+        setState(prev => ({
+          ...prev,
+          loading: false,
+          isLoggedIn: false,
+          telaAtual: 'login',
+        }));
+      }
+    }, 15000); // 15 seconds timeout
+
+    return () => clearTimeout(timeoutId);
+  }, [authLoading]);
 
   // Update treinos when they change
   useEffect(() => {

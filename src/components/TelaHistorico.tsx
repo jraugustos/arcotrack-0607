@@ -79,14 +79,14 @@ export function TelaHistorico() {
   } : null;
 
   return (
-    <div className="min-h-screen bg-arco-light font-dm-sans">
+    <div className="min-h-screen bg-arco-secondary font-dm-sans">
       {/* Header */}
       <div className="bg-black px-4 py-8 border-b-4" style={{borderImage: 'linear-gradient(to right, #43c6ac, #f8ffae) 1'}}>
         <div className="flex items-center justify-between">
           <h1 className="text-lg font-bold text-arco-secondary">Histórico</h1>
           <button
             onClick={() => setMostrarFiltros(!mostrarFiltros)}
-            className="flex items-center space-x-2 text-arco-gray hover:text-arco-navy transition-colors"
+            className="flex items-center space-x-2 text-arco-secondary hover:text-arco-gray transition-colors"
           >
             <Filter className="w-5 h-5" />
             <ChevronDown className={`w-4 h-4 transition-transform ${mostrarFiltros ? 'rotate-180' : ''}`} />
@@ -102,10 +102,10 @@ export function TelaHistorico() {
                   setFiltroSelecionado(filtro.key);
                   setMostrarFiltros(false);
                 }}
-                className={`w-full text-left px-4 py-3 rounded-arco transition-colors ${
+                className={`w-full text-left px-4 py-3 rounded-2xl transition-colors ${
                   filtroSelecionado === filtro.key
-                    ? 'bg-arco-yellow text-arco-navy font-medium'
-                    : 'bg-arco-light text-arco-gray hover:bg-arco-yellow hover:text-arco-navy'
+                    ? 'bg-accent-gradient text-black font-medium'
+                    : 'bg-white text-arco-primary hover:bg-accent-gradient hover:text-black'
                 }`}
               >
                 {filtro.label}
@@ -115,40 +115,40 @@ export function TelaHistorico() {
         )}
       </div>
 
-      <div className="px-6 py-6 space-y-6">
+      <div className="px-4 py-8 space-y-8">
         {/* Estatísticas gerais */}
         {estatisticas && (
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-arco-white rounded-arco p-4 text-center">
-              <div className="w-8 h-8 bg-arco-yellow rounded-full mx-auto mb-2 flex items-center justify-center">
-                <Target className="w-4 h-4 text-arco-navy" />
+            <div className="bg-white rounded-3xl p-4 text-center border border-arco-gray-300/30">
+              <div className="w-10 h-10 bg-accent-gradient rounded-2xl mx-auto mb-3 flex items-center justify-center">
+                <Target className="w-5 h-5 text-black" />
               </div>
-              <div className="text-lg font-bold text-arco-navy">{estatisticas.pontuacaoMedia}</div>
-              <div className="text-xs text-arco-gray">Pontuação média</div>
+              <div className="text-xl font-medium text-arco-primary">{estatisticas.pontuacaoMedia}</div>
+              <div className="text-sm text-arco-gray-700 font-light">Pontuação média</div>
             </div>
             
-            <div className="bg-arco-white rounded-arco p-4 text-center">
-              <div className="w-8 h-8 bg-arco-orange rounded-full mx-auto mb-2 flex items-center justify-center">
-                <Award className="w-4 h-4 text-arco-white" />
+            <div className="bg-white rounded-3xl p-4 text-center border border-arco-gray-300/30">
+              <div className="w-10 h-10 bg-accent-gradient rounded-2xl mx-auto mb-3 flex items-center justify-center">
+                <Award className="w-5 h-5 text-black" />
               </div>
-              <div className="text-lg font-bold text-arco-navy">{estatisticas.melhorPontuacao}</div>
-              <div className="text-xs text-arco-gray">Melhor pontuação</div>
+              <div className="text-xl font-medium text-arco-primary">{estatisticas.melhorPontuacao}</div>
+              <div className="text-sm text-arco-gray-700 font-light">Melhor pontuação</div>
             </div>
             
-            <div className="bg-arco-white rounded-arco p-4 text-center">
-              <div className="w-8 h-8 bg-arco-navy rounded-full mx-auto mb-2 flex items-center justify-center">
-                <Calendar className="w-4 h-4 text-arco-white" />
+            <div className="bg-white rounded-3xl p-4 text-center border border-arco-gray-300/30">
+              <div className="w-10 h-10 bg-accent-gradient rounded-2xl mx-auto mb-3 flex items-center justify-center">
+                <Calendar className="w-5 h-5 text-black" />
               </div>
-              <div className="text-lg font-bold text-arco-navy">{estatisticas.totalTreinos}</div>
-              <div className="text-xs text-arco-gray">Total de treinos</div>
+              <div className="text-xl font-medium text-arco-primary">{estatisticas.totalTreinos}</div>
+              <div className="text-sm text-arco-gray-700 font-light">Total de treinos</div>
             </div>
             
-            <div className="bg-arco-white rounded-arco p-4 text-center">
-              <div className="w-8 h-8 bg-green-500 rounded-full mx-auto mb-2 flex items-center justify-center">
-                <TrendingUp className="w-4 h-4 text-white" />
+            <div className="bg-white rounded-3xl p-4 text-center border border-arco-gray-300/30">
+              <div className="w-10 h-10 bg-accent-gradient rounded-2xl mx-auto mb-3 flex items-center justify-center">
+                <TrendingUp className="w-5 h-5 text-black" />
               </div>
-              <div className="text-lg font-bold text-arco-navy">{estatisticas.consistencia}%</div>
-              <div className="text-xs text-arco-gray">Consistência</div>
+              <div className="text-xl font-medium text-arco-primary">{estatisticas.consistencia}%</div>
+              <div className="text-sm text-arco-gray-700 font-light">Consistência</div>
             </div>
           </div>
         )}
@@ -157,100 +157,115 @@ export function TelaHistorico() {
         {treinosFiltrados.length > 0 ? (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-arco-navy">
+              <h3 className="text-xl font-medium text-arco-primary">
                 {filtros.find(f => f.key === filtroSelecionado)?.label}
               </h3>
-              <span className="text-sm text-arco-gray">
+              <span className="text-sm text-arco-gray-700 font-light">
                 {treinosFiltrados.length} {treinosFiltrados.length === 1 ? 'treino' : 'treinos'}
               </span>
             </div>
 
-            {treinosFiltrados.map((treino) => (
-              <div
-                key={treino.id}
-                className="bg-arco-white rounded-arco p-6 cursor-pointer hover:bg-arco-light transition-colors"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex-1" onClick={() => verDetalhes(treino)}>
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-12 h-12 bg-arco-yellow rounded-full flex items-center justify-center">
-                          <span className="font-bold text-arco-navy">
-                            {new Date(treino.data).getDate()}
-                          </span>
-                        </div>
-                        <div>
-                          <div className="font-semibold text-arco-navy">
-                            {new Date(treino.data).toLocaleDateString('pt-BR', { 
-                              weekday: 'long', 
-                              year: 'numeric', 
-                              month: 'long', 
-                              day: 'numeric' 
-                            })}
-                          </div>
-                          <div className="text-sm text-arco-gray">
-                            {treino.config.series} séries • {treino.config.flechasPorSerie} flechas/série • {treino.config.distancia}m
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Eye className="w-5 h-5 text-arco-gray cursor-pointer" onClick={(e) => { e.stopPropagation(); verDetalhes(treino); }} />
-                        <Trash2 className="w-5 h-5 text-red-500 cursor-pointer hover:text-red-700" onClick={(e) => { e.stopPropagation(); handleDeleteFromList(treino.id); }} />
-                      </div>
-                    </div>
-
+            <div className="space-y-3">
+              {treinosFiltrados.map((treino) => (
+                <div
+                  key={treino.id}
+                  className="bg-white rounded-3xl border border-arco-gray-300/30 hover:shadow-md transition-all duration-200 overflow-hidden"
+                >
+                  {/* Informações do treino */}
+                  <div className="p-6 border-b border-arco-gray-200">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div>
-                          <span className="text-2xl font-bold text-arco-navy">{treino.pontuacaoTotal}</span>
-                          <span className="text-sm text-arco-gray ml-1">pontos</span>
-                        </div>
-                        <div className="text-sm text-arco-gray">
-                          Melhor série: <span className="font-medium text-arco-navy">{treino.melhorSerie}</span>
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-4">
+                          {/* Data circular */}
+                          <div className="w-14 h-14 bg-accent-gradient rounded-2xl flex flex-col items-center justify-center">
+                            <span className="text-lg font-bold text-black">
+                              {new Date(treino.data).getDate()}
+                            </span>
+                            <span className="text-xs font-medium text-black">
+                              {new Date(treino.data).toLocaleDateString('pt-BR', { month: 'short' }).toUpperCase()}
+                            </span>
+                          </div>
+                          
+                          {/* Detalhes do treino */}
+                          <div className="flex-1">
+                            <div className="font-medium text-arco-primary text-lg">
+                              {new Date(treino.data).toLocaleDateString('pt-BR', { 
+                                weekday: 'long', 
+                                day: 'numeric',
+                                month: 'long'
+                              })}
+                            </div>
+                            <div className="text-sm text-arco-gray-700 font-light mt-1">
+                              {treino.config.series} séries • {treino.config.flechasPorSerie} flechas • {treino.config.distancia}m
+                            </div>
+                            <div className="flex items-center space-x-4 mt-2">
+                              <div className="flex items-center space-x-1">
+                                <Target className="w-4 h-4 text-arco-gray-500" />
+                                <span className="text-sm font-medium text-arco-primary">{treino.pontuacaoTotal} pts</span>
+                              </div>
+                              <div className="flex items-center space-x-1">
+                                <Award className="w-4 h-4 text-arco-gray-500" />
+                                <span className="text-sm font-light text-arco-gray-700">
+                                  Média: {Math.round(treino.pontuacaoTotal / (treino.config.series * treino.config.flechasPorSerie))}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                      
-                      {treino.config.temObjetivo && treino.config.objetivo && (
-                        <div className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          treino.pontuacaoTotal >= treino.config.objetivo
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-orange-100 text-orange-800'
-                        }`}>
-                          {treino.pontuacaoTotal >= treino.config.objetivo ? '✓ Meta' : 'Meta'}
-                        </div>
-                      )}
-                    </div>
 
-                    {treino.observacoes && (
-                      <div className="mt-3 text-sm text-arco-gray italic">
-                        "{treino.observacoes.substring(0, 100)}{treino.observacoes.length > 100 ? '...' : ''}"
+                      {/* Pontuação destacada */}
+                      <div className="text-right">
+                        <div className="text-2xl font-bold text-arco-primary">{treino.pontuacaoTotal}</div>
+                        <div className="text-xs text-arco-gray-700 font-light">pontos</div>
                       </div>
-                    )}
+                    </div>
+                  </div>
+
+                  {/* Botões de ação */}
+                  <div className="px-6 py-4 bg-arco-gray-50">
+                    <div className="flex items-center justify-start space-x-3">
+                      <button
+                        onClick={() => verDetalhes(treino)}
+                        className="flex items-center space-x-2 px-4 py-2 bg-arco-gray-100 rounded-2xl hover:bg-arco-gray-200 transition-colors"
+                        title="Visualizar detalhes"
+                      >
+                        <Eye className="w-4 h-4 text-arco-gray-600" />
+                        <span className="text-sm font-medium text-arco-gray-700">Visualizar</span>
+                      </button>
+                      <button
+                        onClick={() => handleDeleteFromList(treino.id)}
+                        className="flex items-center space-x-2 px-4 py-2 bg-red-50 rounded-2xl hover:bg-red-100 transition-colors"
+                        title="Excluir treino"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-500" />
+                        <span className="text-sm font-medium text-red-600">Excluir</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         ) : (
-          /* Estado vazio */
-          <div className="bg-arco-white rounded-arco p-8 text-center">
-            <div className="w-20 h-20 bg-arco-light rounded-full mx-auto mb-4 flex items-center justify-center">
-              <Calendar className="w-10 h-10 text-arco-gray" />
+          <div className="bg-white rounded-3xl p-10 text-center border border-arco-gray-300/30">
+            <div className="w-20 h-20 bg-arco-gray-100 rounded-3xl mx-auto mb-6 flex items-center justify-center">
+              <Calendar className="w-10 h-10 text-arco-gray-500" />
             </div>
-            <h3 className="text-xl font-bold text-arco-navy mb-2">
+            <h3 className="text-xl font-medium text-arco-primary mb-3">
               Nenhum treino encontrado
             </h3>
-            <p className="text-arco-gray mb-6">
+            <p className="text-arco-gray-700 font-light mb-6">
               {filtroSelecionado === 'todos' 
-                ? 'Você ainda não registrou nenhum treino.' 
-                : 'Não há treinos para o filtro selecionado.'
+                ? 'Você ainda não registrou nenhum treino.'
+                : `Nenhum treino encontrado para o filtro "${filtros.find(f => f.key === filtroSelecionado)?.label}".`
               }
             </p>
             <button
               onClick={voltarParaHome}
-              className="bg-arco-yellow text-arco-navy font-semibold py-3 px-6 rounded-arco hover:bg-arco-orange transition-colors"
+              className="bg-accent-gradient text-black font-bold py-3 px-6 rounded-2xl hover:opacity-90 transition-all duration-200"
             >
-              {filtroSelecionado === 'todos' ? 'Registrar primeiro treino' : 'Ver todos os treinos'}
+              Voltar para Home
             </button>
           </div>
         )}
