@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useArcoTrack, Treino } from '../contexts/ArcoTrackContext';
-import { Calendar, Target, Filter, ChevronDown, Award, TrendingUp, Eye } from 'lucide-react';
+import { Calendar, Target, Filter, ChevronDown, Award, TrendingUp, Eye, Trash2 } from 'lucide-react';
 
 export function TelaHistorico() {
-  const { state, navegarPara } = useArcoTrack();
+  const { state, navegarPara, deleteTreino } = useArcoTrack();
   const [filtroSelecionado, setFiltroSelecionado] = useState('todos');
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
   const [treinoSelecionado, setTreinoSelecionado] = useState<Treino | null>(null);
@@ -51,6 +51,15 @@ export function TelaHistorico() {
 
   const voltarParaHome = () => {
     navegarPara('home');
+  };
+
+  const handleDeleteFromList = async (treinoId: string) => {
+    if (!window.confirm('Tem certeza que deseja excluir este treino? Essa ação não pode ser desfeita.')) return;
+    try {
+      await deleteTreino(treinoId);
+    } catch (e) {
+      alert('Erro ao excluir treino. Tente novamente.');
+    }
   };
 
   // Renderizar detalhes do treino
@@ -160,10 +169,9 @@ export function TelaHistorico() {
               <div
                 key={treino.id}
                 className="bg-arco-white rounded-arco p-6 cursor-pointer hover:bg-arco-light transition-colors"
-                onClick={() => verDetalhes(treino)}
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex-1">
+                  <div className="flex-1" onClick={() => verDetalhes(treino)}>
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center space-x-3">
                         <div className="w-12 h-12 bg-arco-yellow rounded-full flex items-center justify-center">
@@ -185,7 +193,10 @@ export function TelaHistorico() {
                           </div>
                         </div>
                       </div>
-                      <Eye className="w-5 h-5 text-arco-gray" />
+                      <div className="flex items-center space-x-2">
+                        <Eye className="w-5 h-5 text-arco-gray cursor-pointer" onClick={(e) => { e.stopPropagation(); verDetalhes(treino); }} />
+                        <Trash2 className="w-5 h-5 text-red-500 cursor-pointer hover:text-red-700" onClick={(e) => { e.stopPropagation(); handleDeleteFromList(treino.id); }} />
+                      </div>
                     </div>
 
                     <div className="flex items-center justify-between">
@@ -250,34 +261,64 @@ export function TelaHistorico() {
 
 // Componente de detalhes do treino
 function DetalheTreino({ treino, onVoltar }: { treino: Treino; onVoltar: () => void }) {
+  const { deleteTreino } = useArcoTrack();
+  const [loading, setLoading] = React.useState(false);
+  const [erro, setErro] = React.useState<string | null>(null);
+
   const pontuacaoMaxima = Math.max(...treino.series.map(s => s.pontuacao));
   const mediaAutoavaliacao = treino.autoavaliacao 
     ? Object.values(treino.autoavaliacao).reduce((acc, val) => acc + val, 0) / 10
     : null;
 
+  const handleDelete = async () => {
+    if (!window.confirm('Tem certeza que deseja excluir este treino? Essa ação não pode ser desfeita.')) return;
+    setLoading(true);
+    setErro(null);
+    try {
+      await deleteTreino(treino.id);
+      onVoltar();
+    } catch (e) {
+      setErro('Erro ao excluir treino. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-arco-light font-dm-sans">
       {/* Header */}
       <div className="bg-black px-4 py-8 border-b-4" style={{borderImage: 'linear-gradient(to right, #43c6ac, #f8ffae) 1'}}>
-        <div className="flex items-center space-x-4">
-          <button
-            onClick={onVoltar}
-            className="w-10 h-10 flex items-center justify-center text-white hover:text-arco-accent transition-colors"
-          >
-            ←
-          </button>
-          <div>
-            <h1 className="text-lg font-bold text-arco-secondary">
-              Detalhes do Treino
-            </h1>
-            <p className="text-arco-secondary">
-              {new Date(treino.data).toLocaleDateString('pt-BR')}
-            </p>
+        <div className="flex items-center space-x-4 justify-between">
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={onVoltar}
+              className="w-10 h-10 flex items-center justify-center text-white hover:text-arco-accent transition-colors"
+            >
+              ←
+            </button>
+            <div>
+              <h1 className="text-lg font-bold text-arco-secondary">
+                Detalhes do Treino
+              </h1>
+              <p className="text-arco-secondary">
+                {new Date(treino.data).toLocaleDateString('pt-BR')}
+              </p>
+            </div>
           </div>
+          <button
+            onClick={handleDelete}
+            disabled={loading}
+            title="Excluir treino"
+            className="w-10 h-10 flex items-center justify-center text-red-500 hover:text-red-700 transition-colors disabled:opacity-60"
+          >
+            <Trash2 className="w-6 h-6" />
+          </button>
         </div>
       </div>
 
       <div className="px-6 py-6 space-y-6">
+        {erro && <div className="text-red-500 text-sm mb-2">{erro}</div>}
+
         {/* Resumo principal */}
         <div className="bg-arco-white rounded-arco p-6">
           <div className="grid grid-cols-2 gap-4 text-center">

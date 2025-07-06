@@ -167,6 +167,8 @@ interface ArcoTrackContextType {
   
   // Error handling
   clearError: () => void;
+  // Novo método para deletar treino
+  deleteTreino: (id: string) => Promise<void>;
 }
 
 const ArcoTrackContext = createContext<ArcoTrackContextType | null>(null);
@@ -556,6 +558,16 @@ export function ArcoTrackProvider({ children }: { children: ReactNode }) {
     setState(prev => ({ ...prev, error: null }));
   };
 
+  // Dentro do ArcoTrackProvider
+  const deleteTreino = async (id: string) => {
+    await treinosHook.deleteTreino(id);
+    // Atualiza o estado local após exclusão
+    setState(prev => ({
+      ...prev,
+      treinos: prev.treinos.filter(t => t.id !== id),
+    }));
+  };
+
   const contextValue: ArcoTrackContextType = {
     state: {
       ...state,
@@ -571,6 +583,7 @@ export function ArcoTrackProvider({ children }: { children: ReactNode }) {
     carregarTreinos,
     getTreinoById,
     clearError,
+    deleteTreino,
   };
 
   return (

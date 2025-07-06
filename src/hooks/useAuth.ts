@@ -20,12 +20,15 @@ export const useAuth = () => {
   });
 
   useEffect(() => {
+    let isMounted = true;
     // Get initial session
     const getInitialSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      
+      console.log('[useAuth] Sessão inicial:', session);
+      if (!isMounted) return;
       if (session?.user) {
         const profile = await getUserProfile(session.user.id);
+        if (!isMounted) return;
         setAuthState({
           user: session.user,
           profile,
@@ -47,10 +50,11 @@ export const useAuth = () => {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email);
-        
+        console.log('[useAuth] Mudança de auth:', event, session?.user?.email);
+        if (!isMounted) return;
         if (session?.user) {
           const profile = await getUserProfile(session.user.id);
+          if (!isMounted) return;
           setAuthState({
             user: session.user,
             profile,
@@ -69,6 +73,7 @@ export const useAuth = () => {
     );
 
     return () => {
+      isMounted = false;
       subscription.unsubscribe();
     };
   }, []);
