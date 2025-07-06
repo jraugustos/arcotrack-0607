@@ -1,0 +1,97 @@
+/* ArcoTrack Modern UI - Inspired by Fitme Design System */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 500; /* Peso médio como base */
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-color: #FAFAFA; /* Off-white moderno */
+  color: #080706; /* Preto principal */
+}
+
+#root {
+  min-height: 100vh;
+  width: 100%;
+  max-width: 430px; /* Tamanho otimizado para mobile moderno */
+  margin: 0 auto;
+  background-color: #FAFAFA;
+  box-shadow: 0 0 40px rgba(8, 7, 6, 0.08); /* Sombra mais sutil */
+  position: relative;
+}
+
+/* Remover estilos padrão de listas */
+ul, ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Remover estilos padrão de botões */
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* Remover estilos padrão de inputs */
+input, textarea {
+  font-family: inherit;
+  border: none;
+  outline: none;
+}
+
+/* Estilos para dispositivos móveis */
+@media (max-width: 480px) {
+  #root {
+    box-shadow: none;
+    max-width: 100%;
+  }
+}
+
+/* Estilos para scroll suave */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Prevenir zoom no iOS */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  select:focus,
+  textarea:focus,
+  input:focus {
+    font-size: 16px;
+    transform: translateZ(0);
+  }
+}
+
+/* Estilos customizados para sliders */
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  height: 24px;
+  width: 24px;
+  border-radius: 50%;
+  background: #2C3E50;
+  cursor: pointer;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.slider::-moz-range-thumb {
+  height: 24px;
+  width: 24px;
+  border-radius: 50%;
+  background: #2C3E50;
+  cursor: pointer;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}

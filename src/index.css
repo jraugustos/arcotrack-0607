@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%
+  }
+
+  .dark {
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%
+  }
+}
+
+img {
+  object-position: top;
+}
+
+.bg-accent-gradient {
+  background: -webkit-linear-gradient(to right, #43c6ac, #f8ffae);
+  background: linear-gradient(to right, #43c6ac, #f8ffae);
+}
+
+@font-face {
+  font-family: 'Anke Devanagari';
+  src: url('/fonts/anke-devanagari.woff2') format('woff2'),
+       url('/fonts/anke-devanagari.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Slider com gradiente no thumb */
+.slider-gradient::-webkit-slider-thumb {
+  background: linear-gradient(to right, #43c6ac, #f8ffae);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  border: 2px solid #43c6ac;
+  cursor: pointer;
+}
+.slider-gradient::-moz-range-thumb {
+  background: linear-gradient(to right, #43c6ac, #f8ffae);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  border: 2px solid #43c6ac;
+  cursor: pointer;
+}
+.slider-gradient::-ms-thumb {
+  background: linear-gradient(to right, #43c6ac, #f8ffae);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  border: 2px solid #43c6ac;
+  cursor: pointer;
+}
