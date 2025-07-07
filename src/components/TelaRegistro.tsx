@@ -166,16 +166,27 @@ export function TelaRegistro() {
 
           {/* Objetivo */}
           <div>
+            <label className="flex items-center space-x-3 text-arco-primary font-medium mb-4 text-lg">
+              <Target className="w-6 h-6" />
+              <span>Objetivo de pontuação</span>
+            </label>
+            
             <button
               onClick={toggleObjetivo}
-              className="flex items-center space-x-3 text-arco-primary font-medium mb-4 hover:text-arco-accent transition-colors text-lg"
+              className={`w-full p-5 border-2 rounded-2xl font-medium transition-all duration-200 flex items-center justify-center space-x-3 ${
+                config.temObjetivo
+                  ? 'bg-accent-gradient border-arco-accent text-arco-primary'
+                  : 'bg-white border-arco-gray-300 text-arco-gray-700 hover:border-arco-accent hover:bg-arco-accent/10'
+              }`}
             >
-              <CheckSquare className={`w-6 h-6 ${config.temObjetivo ? 'text-arco-accent' : 'text-arco-gray-500'}`} />
-              <span>Deseja adicionar um objetivo?</span>
+              <CheckSquare className={`w-5 h-5 ${config.temObjetivo ? 'text-arco-primary' : 'text-arco-gray-500'}`} />
+              <span>
+                {config.temObjetivo ? 'Objetivo ativado' : 'Adicionar objetivo de pontuação'}
+              </span>
             </button>
             
             {config.temObjetivo && (
-              <div className="ml-8">
+              <div className="mt-4">
                 <div className="flex items-center space-x-4">
                   <input
                     type="number"

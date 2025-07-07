@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useArcoTrack, Treino } from '../contexts/ArcoTrackContext';
-import { Calendar, Target, Filter, ChevronDown, Award, TrendingUp, Eye, Trash2 } from 'lucide-react';
+import { Calendar, Target, Filter, ChevronDown, Award, TrendingUp, Eye, Trash2, Brain } from 'lucide-react';
 
 export function TelaHistorico() {
   const { state, navegarPara, deleteTreino } = useArcoTrack();
@@ -119,36 +119,59 @@ export function TelaHistorico() {
         {/* Estatísticas gerais */}
         {estatisticas && (
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-white rounded-3xl p-4 text-center border border-arco-gray-300/30">
-              <div className="w-10 h-10 bg-accent-gradient rounded-2xl mx-auto mb-3 flex items-center justify-center">
-                <Target className="w-5 h-5 text-black" />
+            <div className="bg-accent-gradient rounded-3xl p-4 text-center">
+              <div className="w-10 h-10 bg-black rounded-2xl mx-auto mb-3 flex items-center justify-center">
+                <Target className="w-5 h-5 text-white" />
               </div>
-              <div className="text-xl font-medium text-arco-primary">{estatisticas.pontuacaoMedia}</div>
-              <div className="text-sm text-arco-gray-700 font-light">Pontuação média</div>
+              <div className="text-xl font-medium text-black">{estatisticas.pontuacaoMedia}</div>
+              <div className="text-sm text-black/70 font-light">Pontuação média</div>
             </div>
             
-            <div className="bg-white rounded-3xl p-4 text-center border border-arco-gray-300/30">
-              <div className="w-10 h-10 bg-accent-gradient rounded-2xl mx-auto mb-3 flex items-center justify-center">
-                <Award className="w-5 h-5 text-black" />
+            <div className="bg-accent-gradient rounded-3xl p-4 text-center">
+              <div className="w-10 h-10 bg-black rounded-2xl mx-auto mb-3 flex items-center justify-center">
+                <Award className="w-5 h-5 text-white" />
               </div>
-              <div className="text-xl font-medium text-arco-primary">{estatisticas.melhorPontuacao}</div>
-              <div className="text-sm text-arco-gray-700 font-light">Melhor pontuação</div>
+              <div className="text-xl font-medium text-black">{estatisticas.melhorPontuacao}</div>
+              <div className="text-sm text-black/70 font-light">Melhor pontuação</div>
             </div>
             
-            <div className="bg-white rounded-3xl p-4 text-center border border-arco-gray-300/30">
-              <div className="w-10 h-10 bg-accent-gradient rounded-2xl mx-auto mb-3 flex items-center justify-center">
-                <Calendar className="w-5 h-5 text-black" />
+            <div className="bg-accent-gradient rounded-3xl p-4 text-center">
+              <div className="w-10 h-10 bg-black rounded-2xl mx-auto mb-3 flex items-center justify-center">
+                <Calendar className="w-5 h-5 text-white" />
               </div>
-              <div className="text-xl font-medium text-arco-primary">{estatisticas.totalTreinos}</div>
-              <div className="text-sm text-arco-gray-700 font-light">Total de treinos</div>
+              <div className="text-xl font-medium text-black">{estatisticas.totalTreinos}</div>
+              <div className="text-sm text-black/70 font-light">Total de treinos</div>
             </div>
             
-            <div className="bg-white rounded-3xl p-4 text-center border border-arco-gray-300/30">
-              <div className="w-10 h-10 bg-accent-gradient rounded-2xl mx-auto mb-3 flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-black" />
+            <div className="bg-accent-gradient rounded-3xl p-4 text-center">
+              <div className="w-10 h-10 bg-black rounded-2xl mx-auto mb-3 flex items-center justify-center">
+                <TrendingUp className="w-5 h-5 text-white" />
               </div>
-              <div className="text-xl font-medium text-arco-primary">{estatisticas.consistencia}%</div>
-              <div className="text-sm text-arco-gray-700 font-light">Consistência</div>
+              <div className="text-xl font-medium text-black">{estatisticas.consistencia}%</div>
+              <div className="text-sm text-black/70 font-light">Consistência</div>
+            </div>
+          </div>
+        )}
+
+        {/* Botão de Insights */}
+        {(treinos || []).filter(t => t.autoavaliacao && t.concluido).length >= 2 && (
+          <div className="bg-white rounded-3xl border border-arco-gray-300/30 overflow-hidden">
+            <div className="p-6">
+              <div>
+                <h3 className="text-lg font-bold text-arco-primary">Insights do Shot Process</h3>
+                <p className="text-sm text-arco-gray-600 mt-1">
+                  Análise avançada baseada em {(treinos || []).filter(t => t.autoavaliacao && t.concluido).length} treinos com autoavaliação
+                </p>
+              </div>
+            </div>
+            <div className="px-6 pb-6">
+              <button
+                onClick={() => navegarPara('insights')}
+                className="w-full bg-accent-gradient text-black font-medium py-3 rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center space-x-2"
+              >
+                <span>Ver Insights</span>
+                <Brain className="w-4 h-4" />
+              </button>
             </div>
           </div>
         )}
@@ -189,20 +212,12 @@ export function TelaHistorico() {
                           {/* Detalhes do treino */}
                           <div className="flex-1">
                             <div className="font-medium text-arco-primary text-lg">
-                              {new Date(treino.data).toLocaleDateString('pt-BR', { 
-                                weekday: 'long', 
-                                day: 'numeric',
-                                month: 'long'
-                              })}
+                              {treino.pontuacaoTotal} pontos
                             </div>
                             <div className="text-sm text-arco-gray-700 font-light mt-1">
                               {treino.config.series} séries • {treino.config.flechasPorSerie} flechas • {treino.config.distancia}m
                             </div>
                             <div className="flex items-center space-x-4 mt-2">
-                              <div className="flex items-center space-x-1">
-                                <Target className="w-4 h-4 text-arco-gray-500" />
-                                <span className="text-sm font-medium text-arco-primary">{treino.pontuacaoTotal} pts</span>
-                              </div>
                               <div className="flex items-center space-x-1">
                                 <Award className="w-4 h-4 text-arco-gray-500" />
                                 <span className="text-sm font-light text-arco-gray-700">
@@ -214,11 +229,7 @@ export function TelaHistorico() {
                         </div>
                       </div>
 
-                      {/* Pontuação destacada */}
-                      <div className="text-right">
-                        <div className="text-2xl font-bold text-arco-primary">{treino.pontuacaoTotal}</div>
-                        <div className="text-xs text-arco-gray-700 font-light">pontos</div>
-                      </div>
+
                     </div>
                   </div>
 

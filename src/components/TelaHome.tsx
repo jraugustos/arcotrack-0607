@@ -52,28 +52,28 @@ export function TelaHome() {
           <>
             {/* Estatísticas */}
             <div className="grid grid-cols-3 gap-4">
-              <div className="bg-white rounded-3xl p-4 text-center border border-arco-gray-300/30">
-                <div className="w-10 h-10 bg-accent-gradient rounded-2xl mx-auto mb-3 flex items-center justify-center">
-                  <Target className="w-5 h-5 text-black" />
+              <div className="bg-accent-gradient rounded-3xl p-4 text-center">
+                <div className="w-10 h-10 bg-black rounded-2xl mx-auto mb-3 flex items-center justify-center">
+                  <Target className="w-5 h-5 text-white" />
                 </div>
-                <div className="text-xl font-medium text-arco-primary">{pontuacaoMedia}</div>
-                <div className="text-sm text-arco-gray-700 font-light">Média</div>
+                <div className="text-xl font-medium text-black">{pontuacaoMedia}</div>
+                <div className="text-sm text-black/70 font-light">Média</div>
               </div>
               
-              <div className="bg-white rounded-3xl p-4 text-center border border-arco-gray-300/30">
-                <div className="w-10 h-10 bg-accent-gradient rounded-2xl mx-auto mb-3 flex items-center justify-center">
-                  <Award className="w-5 h-5 text-black" />
+              <div className="bg-accent-gradient rounded-3xl p-4 text-center">
+                <div className="w-10 h-10 bg-black rounded-2xl mx-auto mb-3 flex items-center justify-center">
+                  <Award className="w-5 h-5 text-white" />
                 </div>
-                <div className="text-xl font-medium text-arco-primary">{melhorPontuacao}</div>
-                <div className="text-sm text-arco-gray-700 font-light">Melhor</div>
+                <div className="text-xl font-medium text-black">{melhorPontuacao}</div>
+                <div className="text-sm text-black/70 font-light">Melhor</div>
               </div>
               
-              <div className="bg-white rounded-3xl p-4 text-center border border-arco-gray-300/30">
-                <div className="w-10 h-10 bg-accent-gradient rounded-2xl mx-auto mb-3 flex items-center justify-center">
-                  <Calendar className="w-5 h-5 text-black" />
+              <div className="bg-accent-gradient rounded-3xl p-4 text-center">
+                <div className="w-10 h-10 bg-black rounded-2xl mx-auto mb-3 flex items-center justify-center">
+                  <Calendar className="w-5 h-5 text-white" />
                 </div>
-                <div className="text-xl font-medium text-arco-primary">{treinosEsteMes}</div>
-                <div className="text-sm text-arco-gray-700 font-light">Este mês</div>
+                <div className="text-xl font-medium text-black">{treinosEsteMes}</div>
+                <div className="text-sm text-black/70 font-light">Este mês</div>
               </div>
             </div>
 

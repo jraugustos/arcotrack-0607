@@ -10,11 +10,12 @@ import { TelaAutoavaliacao } from './components/TelaAutoavaliacao';
 import { TelaHistorico } from './components/TelaHistorico';
 import { TelaConfiguracoes } from './components/TelaConfiguracoes';
 import { TelaPerfil } from './components/TelaPerfil';
+import TelaInsights from './components/TelaInsights';
 import { NavegacaoInferior } from './components/NavegacaoInferior';
 import TestaConexao from './components/TestaConexao';
 
 function AppContent() {
-  const { state } = useArcoTrack();
+  const { state, navegarPara } = useArcoTrack();
   const authContext = useAuthContext();
   const [showRetry, setShowRetry] = useState(false);
   const [debugInfo, setDebugInfo] = useState('');
@@ -182,6 +183,8 @@ function AppContent() {
         return <TelaConfiguracoes />;
       case 'perfil':
         return <TelaPerfil />;
+      case 'insights':
+        return <TelaInsights onVoltar={() => navegarPara('historico')} />;
       default:
         return <TelaHome />;
     }

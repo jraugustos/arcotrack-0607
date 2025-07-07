@@ -32,8 +32,8 @@ img {
 }
 
 .bg-accent-gradient {
-  background: -webkit-linear-gradient(to right, #43c6ac, #f8ffae);
-  background: linear-gradient(to right, #43c6ac, #f8ffae);
+  background: -webkit-linear-gradient(45deg, #43c6ac, #f8ffae);
+  background: linear-gradient(45deg, #43c6ac, #f8ffae);
 }
 
 @font-face {
