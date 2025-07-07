@@ -63,7 +63,7 @@ export function TelaRegistro() {
   const pontuacaoMaxima = config.series * config.flechasPorSerie * 10;
 
   return (
-    <div className="min-h-screen bg-arco-secondary font-dm-sans">
+    <div className="min-h-screen bg-arco-secondary font-dm-sans flex flex-col">
       {/* Header */}
       <div className="bg-black px-4 py-8 border-b-4" style={{borderImage: 'linear-gradient(to right, #43c6ac, #f8ffae) 1'}}>
         <div className="flex items-center justify-between">
@@ -77,7 +77,9 @@ export function TelaRegistro() {
         </div>
       </div>
 
-      <div className="px-4 py-8">
+      {/* Conteúdo scrollável */}
+      <div className="flex-1 overflow-y-auto pb-32">
+        <div className="px-4 py-8">
         <div className="bg-white rounded-3xl p-8 border border-arco-gray-300/30 space-y-8">
           {/* Data do treino */}
           <div>
@@ -234,27 +236,23 @@ export function TelaRegistro() {
           </div>
         </div>
 
-        {/* Botões */}
-        <div className="flex space-x-4 mt-8">
-          <button
-            onClick={cancelar}
-            className="flex-1 bg-white border-2 border-arco-gray-300 text-arco-gray-700 font-medium py-5 rounded-2xl hover:border-arco-primary hover:text-arco-primary transition-all duration-200"
-          >
-            Cancelar
-          </button>
-          <button
-            onClick={handleIniciarTreino}
-            disabled={state.loading}
-            className="flex-1 bg-accent-gradient text-arco-primary font-bold py-5 rounded-2xl hover:opacity-90 transition-all duration-200 flex items-center justify-center space-x-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {state.loading ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
-            ) : (
-              <Play className="w-5 h-5" />
-            )}
-            <span>Iniciar Treino</span>
-          </button>
         </div>
+      </div>
+
+      {/* Botão fixo no rodapé */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-arco-gray-200 p-4 safe-area-pb">
+        <button
+          onClick={handleIniciarTreino}
+          disabled={state.loading}
+          className="w-full bg-accent-gradient text-black font-bold py-4 rounded-2xl hover:opacity-90 transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {state.loading ? (
+            <Loader2 className="w-5 h-5 animate-spin" />
+          ) : (
+            <Play className="w-5 h-5" />
+          )}
+          <span>Iniciar Treino</span>
+        </button>
       </div>
     </div>
   );
