@@ -83,30 +83,29 @@ export function TelaExecucao() {
     serie.flechas.length >= config.flechasPorSerie
   );
 
-  // Função para calcular a pontuação baseada na distância do centro (proporcional ao tamanho)
+  // Função para calcular a pontuação baseada no sistema fixo 280x280
   const calcularPontuacao = (x: number, y: number): number => {
     try {
       if (isNaN(x) || isNaN(y)) return 0;
       
-      const centerX = tamanhoAlvo / 2;
-      const centerY = tamanhoAlvo / 2;
+      // Centro fixo do sistema 280x280
+      const centerX = 140;
+      const centerY = 140;
       const distancia = Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2));
       
       if (isNaN(distancia)) return 0;
       
-      // Calcular raios proporcionais ao tamanho do alvo
-      const fatorEscala = tamanhoAlvo / 280; // 280 era o tamanho original
-      
-      if (distancia <= 14 * fatorEscala) return 10;
-      if (distancia <= 27 * fatorEscala) return 9;
-      if (distancia <= 41 * fatorEscala) return 8;
-      if (distancia <= 54 * fatorEscala) return 7;
-      if (distancia <= 68 * fatorEscala) return 6;
-      if (distancia <= 81 * fatorEscala) return 5;
-      if (distancia <= 95 * fatorEscala) return 4;
-      if (distancia <= 108 * fatorEscala) return 3;
-      if (distancia <= 122 * fatorEscala) return 2;
-      if (distancia <= 135 * fatorEscala) return 1;
+      // Raios fixos do sistema original (280x280)
+      if (distancia <= 14) return 10;
+      if (distancia <= 27) return 9;
+      if (distancia <= 41) return 8;
+      if (distancia <= 54) return 7;
+      if (distancia <= 68) return 6;
+      if (distancia <= 81) return 5;
+      if (distancia <= 95) return 4;
+      if (distancia <= 108) return 3;
+      if (distancia <= 122) return 2;
+      if (distancia <= 135) return 1;
       return 0;
     } catch (error) {
       console.error('Erro ao calcular pontuação:', error);
@@ -177,22 +176,30 @@ export function TelaExecucao() {
       const svg = event.currentTarget;
       const rect = svg.getBoundingClientRect();
       
-      // Cálculo de coordenadas considerando zoom e tamanho responsivo
+      // Cálculo de coordenadas SEMPRE normalizadas para sistema 280x280
       const escalaAtual = zoomAtivo ? escalaZoom : 1;
-      const tamanhoBase = tamanhoAlvo; // Usar tamanho responsivo
-      const tamanhoAtual = tamanhoBase * escalaAtual;
+      const tamanhoVisual = tamanhoAlvo * escalaAtual; // Tamanho visual atual
       
       // Ajustar coordenadas para o centro do alvo quando há zoom
-      const offsetX = zoomAtivo ? (rect.width - tamanhoAtual) / 2 : 0;
-      const offsetY = zoomAtivo ? (rect.height - tamanhoAtual) / 2 : 0;
+      const offsetX = zoomAtivo ? (rect.width - tamanhoVisual) / 2 : 0;
+      const offsetY = zoomAtivo ? (rect.height - tamanhoVisual) / 2 : 0;
       
-      const x = Math.round(((event.clientX - rect.left - offsetX) * tamanhoBase) / tamanhoAtual);
-      const y = Math.round(((event.clientY - rect.top - offsetY) * tamanhoBase) / tamanhoAtual);
+      // Converter clique para coordenadas no espaço visual do alvo
+      const xVisual = (event.clientX - rect.left - offsetX) / tamanhoVisual;
+      const yVisual = (event.clientY - rect.top - offsetY) / tamanhoVisual;
       
-      console.log('Coordenadas calculadas:', { x, y, escalaAtual, zoomAtivo });
+      // SEMPRE normalizar para sistema 280x280 (padrão)
+      const x = Math.round(xVisual * 280);
+      const y = Math.round(yVisual * 280);
       
-      // Validação básica usando tamanho responsivo
-      if (x < 0 || x > tamanhoBase || y < 0 || y > tamanhoBase) {
+      console.log('Coordenadas calculadas:', { 
+        x, y, 
+        xVisual, yVisual,
+        tamanhoAlvo, escalaAtual, zoomAtivo 
+      });
+      
+      // Validação no sistema padrão 280x280
+      if (x < 0 || x > 280 || y < 0 || y > 280) {
         console.log('Coordenadas fora dos limites');
         return;
       }
