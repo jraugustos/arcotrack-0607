@@ -11,6 +11,7 @@ import { TelaHistorico } from './components/TelaHistorico';
 import { TelaConfiguracoes } from './components/TelaConfiguracoes';
 import { TelaPerfil } from './components/TelaPerfil';
 import TelaInsights from './components/TelaInsights';
+import { TelaEdicaoTreino } from './components/TelaEdicaoTreino';
 import { NavegacaoInferior } from './components/NavegacaoInferior';
 import TestaConexao from './components/TestaConexao';
 
@@ -185,6 +186,15 @@ function AppContent() {
         return <TelaPerfil />;
       case 'insights':
         return <TelaInsights onVoltar={() => navegarPara('historico')} />;
+      case 'edicao-treino':
+        return state.treinoEditandoId ? (
+          <TelaEdicaoTreino 
+            treinoId={state.treinoEditandoId} 
+            onVoltar={() => navegarPara('historico')} 
+          />
+        ) : (
+          <TelaHome />
+        );
       default:
         return <TelaHome />;
     }

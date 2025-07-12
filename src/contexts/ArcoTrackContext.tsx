@@ -68,6 +68,7 @@ export interface AppState {
   isLoggedIn: boolean;
   loading: boolean;
   error: string | null;
+  treinoEditandoId: string | null;
 }
 
 // Estado inicial
@@ -81,6 +82,7 @@ const estadoInicial: AppState = {
   isLoggedIn: false,
   loading: false,
   error: null,
+  treinoEditandoId: null,
 };
 
 // Helper functions to convert between DB and App types
@@ -171,6 +173,8 @@ interface ArcoTrackContextType {
   clearError: () => void;
   // Novo método para deletar treino
   deleteTreino: (id: string) => Promise<void>;
+  // Novo método para iniciar edição de treino
+  iniciarEdicaoTreino: (id: string) => void;
 }
 
 const ArcoTrackContext = createContext<ArcoTrackContextType | null>(null);
@@ -648,6 +652,15 @@ export function ArcoTrackProvider({ children }: { children: ReactNode }) {
     }));
   };
 
+  // Iniciar edição de treino
+  const iniciarEdicaoTreino = (id: string) => {
+    setState(prev => ({
+      ...prev,
+      treinoEditandoId: id,
+      telaAtual: 'edicao-treino',
+    }));
+  };
+
   const contextValue: ArcoTrackContextType = {
     state: {
       ...state,
@@ -665,6 +678,7 @@ export function ArcoTrackProvider({ children }: { children: ReactNode }) {
     getTreinoById,
     clearError,
     deleteTreino,
+    iniciarEdicaoTreino,
   };
 
   return (

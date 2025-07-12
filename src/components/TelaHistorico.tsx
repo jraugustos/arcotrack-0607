@@ -3,7 +3,7 @@ import { useArcoTrack, Treino } from '../contexts/ArcoTrackContext';
 import { Calendar, Target, Filter, ChevronDown, Award, TrendingUp, Eye, Trash2, Brain, Edit } from 'lucide-react';
 
 export function TelaHistorico() {
-  const { state, navegarPara, deleteTreino } = useArcoTrack();
+  const { state, navegarPara, deleteTreino, iniciarEdicaoTreino } = useArcoTrack();
   const [filtroSelecionado, setFiltroSelecionado] = useState('todos');
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
   const [treinoSelecionado, setTreinoSelecionado] = useState<Treino | null>(null);
@@ -46,9 +46,7 @@ export function TelaHistorico() {
   };
 
   const editarTreino = (treino: Treino) => {
-    // TODO: Implementar lógica de edição
-    // Por enquanto, apenas mostrar alerta
-    alert(`Edição de treino em desenvolvimento!\nTreino: ${treino.pontuacaoTotal} pontos - ${treino.data}`);
+    iniciarEdicaoTreino(treino.id);
   };
 
   const voltarParaLista = () => {
@@ -241,30 +239,30 @@ export function TelaHistorico() {
 
                   {/* Botões de ação */}
                   <div className="px-6 py-4 bg-arco-gray-50">
-                    <div className="flex items-center justify-start space-x-3">
+                    <div className="grid grid-cols-3 gap-2">
                       <button
                         onClick={() => verDetalhes(treino)}
-                        className="flex items-center space-x-2 px-4 py-2 bg-arco-gray-100 rounded-2xl hover:bg-arco-gray-200 transition-colors"
+                        className="flex items-center justify-center space-x-1 px-2 py-2 bg-arco-gray-100 rounded-2xl hover:bg-arco-gray-200 transition-colors"
                         title="Visualizar detalhes"
                       >
                         <Eye className="w-4 h-4 text-arco-gray-600" />
-                        <span className="text-sm font-medium text-arco-gray-700">Visualizar</span>
+                        <span className="text-xs font-medium text-arco-gray-700">Visualizar</span>
                       </button>
                       <button
                         onClick={() => editarTreino(treino)}
-                        className="flex items-center space-x-2 px-4 py-2 bg-blue-50 rounded-2xl hover:bg-blue-100 transition-colors"
+                        className="flex items-center justify-center space-x-1 px-2 py-2 bg-blue-50 rounded-2xl hover:bg-blue-100 transition-colors"
                         title="Editar treino"
                       >
                         <Edit className="w-4 h-4 text-blue-600" />
-                        <span className="text-sm font-medium text-blue-700">Editar</span>
+                        <span className="text-xs font-medium text-blue-700">Editar</span>
                       </button>
                       <button
                         onClick={() => handleDeleteFromList(treino.id)}
-                        className="flex items-center space-x-2 px-4 py-2 bg-red-50 rounded-2xl hover:bg-red-100 transition-colors"
+                        className="flex items-center justify-center space-x-1 px-2 py-2 bg-red-50 rounded-2xl hover:bg-red-100 transition-colors"
                         title="Excluir treino"
                       >
                         <Trash2 className="w-4 h-4 text-red-500" />
-                        <span className="text-sm font-medium text-red-600">Excluir</span>
+                        <span className="text-xs font-medium text-red-600">Excluir</span>
                       </button>
                     </div>
                   </div>
