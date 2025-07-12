@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useArcoTrack, Treino } from '../contexts/ArcoTrackContext';
-import { Calendar, Target, Filter, ChevronDown, Award, TrendingUp, Eye, Trash2, Brain } from 'lucide-react';
+import { Calendar, Target, Filter, ChevronDown, Award, TrendingUp, Eye, Trash2, Brain, Edit } from 'lucide-react';
 
 export function TelaHistorico() {
   const { state, navegarPara, deleteTreino } = useArcoTrack();
@@ -43,6 +43,12 @@ export function TelaHistorico() {
 
   const verDetalhes = (treino: Treino) => {
     setTreinoSelecionado(treino);
+  };
+
+  const editarTreino = (treino: Treino) => {
+    // TODO: Implementar lógica de edição
+    // Por enquanto, apenas mostrar alerta
+    alert(`Edição de treino em desenvolvimento!\nTreino: ${treino.pontuacaoTotal} pontos - ${treino.data}`);
   };
 
   const voltarParaLista = () => {
@@ -243,6 +249,14 @@ export function TelaHistorico() {
                       >
                         <Eye className="w-4 h-4 text-arco-gray-600" />
                         <span className="text-sm font-medium text-arco-gray-700">Visualizar</span>
+                      </button>
+                      <button
+                        onClick={() => editarTreino(treino)}
+                        className="flex items-center space-x-2 px-4 py-2 bg-blue-50 rounded-2xl hover:bg-blue-100 transition-colors"
+                        title="Editar treino"
+                      >
+                        <Edit className="w-4 h-4 text-blue-600" />
+                        <span className="text-sm font-medium text-blue-700">Editar</span>
                       </button>
                       <button
                         onClick={() => handleDeleteFromList(treino.id)}

@@ -45,13 +45,8 @@ export function TelaLogin() {
       setErro('');
       await signUpWithEmail(email, senha, nome);
       
-      // Mensagem dinâmica baseada na configuração
-      const disableEmailConfirmation = import.meta.env.VITE_DISABLE_EMAIL_CONFIRMATION === 'true';
-      if (disableEmailConfirmation) {
-        setErro('Conta criada com sucesso! Você já pode fazer login.');
-      } else {
-        setErro('Conta criada com sucesso! Verifique seu e-mail para confirmar.');
-      }
+      // Conta criada com sucesso - sem necessidade de confirmação
+      setErro('Conta criada com sucesso! Você já pode fazer login.');
     } catch (error: any) {
       console.error('Error during signup:', error);
       setErro(error.message || 'Erro ao criar conta. Tente novamente.');

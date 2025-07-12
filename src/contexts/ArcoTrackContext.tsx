@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useAuthContext } from './AuthContext';
 import { useTreinos, TreinoCompleto } from '../hooks/useTreinos';
+import { useAutoSave } from '../hooks/useAutoSave';
 import { Profile } from '../lib/database.types';
 
 // Tipos do aplicativo (mantidos compatíveis)
@@ -158,6 +159,7 @@ interface ArcoTrackContextType {
   registrarFlecha: (flecha: Flecha) => Promise<void>;
   editarFlecha: (serieIndex: number, flechaIndex: number, novaFlecha: Flecha) => Promise<void>;
   proximaSerie: () => Promise<void>;
+  navegarParaSerie: (numeroSerie: number) => void;
   finalizarTreino: (observacoes?: string, autoavaliacao?: Autoavaliacao) => Promise<void>;
   resetTreinoAtual: () => void;
   
@@ -177,6 +179,7 @@ const ArcoTrackContext = createContext<ArcoTrackContextType | null>(null);
 export function ArcoTrackProvider({ children }: { children: ReactNode }) {
   const { user, profile, isAuthenticated, loading: authLoading } = useAuthContext();
   const treinosHook = useTreinos();
+  const autoSave = useAutoSave();
   
   const [state, setState] = useState<AppState>(estadoInicial);
   const [treinoAtualId, setTreinoAtualId] = useState<string | null>(null);
@@ -204,15 +207,40 @@ export function ArcoTrackProvider({ children }: { children: ReactNode }) {
       return;
     }
     
-    if (isAuthenticated && profile) {
-      console.log('[ArcoTrackContext] ✅ Setting user as logged in, redirecting to home');
-      setState(prev => ({
-        ...prev,
-        usuario: convertProfileToUsuario(profile),
-        isLoggedIn: true,
-        telaAtual: prev.telaAtual === 'login' ? 'home' : prev.telaAtual,
-        loading: false,
-      }));
+    if (isAuthenticated && profile && user) {
+      console.log('[ArcoTrackContext] ✅ Setting user as logged in, checking for saved training');
+      
+      // Verificar se existe treino salvo localmente
+      const treinoSalvo = autoSave.loadSavedTraining(user.id);
+      let telaDestino = state.telaAtual === 'login' ? 'home' : state.telaAtual;
+      
+      if (treinoSalvo && !treinoSalvo.concluido) {
+        console.log('[ArcoTrackContext] 🔄 Treino incompleto encontrado, recuperando...');
+        telaDestino = 'execucao';
+        
+        setState(prev => ({
+          ...prev,
+          usuario: convertProfileToUsuario(profile),
+          isLoggedIn: true,
+          telaAtual: telaDestino,
+          treinoAtual: treinoSalvo,
+          serieAtual: Math.max(0, treinoSalvo.series.length - 1), // Última série iniciada
+          flechaAtual: treinoSalvo.series[treinoSalvo.series.length - 1]?.flechas.length || 0,
+          loading: false,
+        }));
+        
+        // Definir ID do treino atual para sincronização
+        setTreinoAtualId(treinoSalvo.id);
+      } else {
+        setState(prev => ({
+          ...prev,
+          usuario: convertProfileToUsuario(profile),
+          isLoggedIn: true,
+          telaAtual: telaDestino,
+          loading: false,
+        }));
+      }
+      
       console.log('[ArcoTrackContext] ✅ Estado definido como LOGADO');
     } else {
       console.log('[ArcoTrackContext] ❌ Setting user as logged out');
@@ -245,6 +273,14 @@ export function ArcoTrackProvider({ children }: { children: ReactNode }) {
 
     return () => clearTimeout(timeoutId);
   }, [authLoading]);
+
+  // Auto-save treino atual sempre que ele mudar
+  useEffect(() => {
+    if (state.treinoAtual && user && !state.treinoAtual.concluido) {
+      console.log('[ArcoTrackContext] 💾 Auto-saving treino atual');
+      autoSave.debouncedAutoSave(state.treinoAtual, user.id);
+    }
+  }, [state.treinoAtual, user, autoSave.debouncedAutoSave]);
 
   // Update treinos when they change
   useEffect(() => {
@@ -388,28 +424,10 @@ export function ArcoTrackProvider({ children }: { children: ReactNode }) {
       
       console.log('🎯 Arrows in current series:', flechasNaSerie, '/', flechasPorSerie);
       
+      // Série completa - mas não avancar automaticamente mais
+      // O usuário deve clicar manualmente em "Próxima Série"
       if (flechasNaSerie >= flechasPorSerie) {
-        const totalSeries = state.treinoAtual.config.series;
-        console.log('🎯 Series complete. Current series:', state.serieAtual + 1, '/', totalSeries);
-        
-        if (state.serieAtual + 1 >= totalSeries) {
-          console.log('🎯 Training complete! Going to finalization screen');
-          setState(prev => ({
-            ...prev,
-            treinoAtual: treinoAtualizado,
-            telaAtual: 'finalizacao',
-          }));
-          return;
-        } else {
-          console.log('🎯 Series complete, advancing to next series');
-          setState(prev => ({
-            ...prev,
-            treinoAtual: treinoAtualizado,
-            serieAtual: prev.serieAtual + 1,
-            flechaAtual: 0, // Reset arrow counter for new series
-          }));
-          return;
-        }
+        console.log('🎯 Series complete. Waiting for user to manually advance.');
       }
 
       console.log('🎯 Updating state with new arrow');
@@ -487,6 +505,34 @@ export function ArcoTrackProvider({ children }: { children: ReactNode }) {
     }));
   };
 
+  // Navigate to specific series
+  const navegarParaSerie = (numeroSerie: number) => {
+    if (!state.treinoAtual) return;
+    
+    // Converter número da série (1-based) para índice (0-based)
+    const indiceSerieAlvo = numeroSerie - 1;
+    
+    // Validações
+    if (indiceSerieAlvo < 0 || indiceSerieAlvo >= state.treinoAtual.config.series) {
+      console.warn('Número de série inválido:', numeroSerie);
+      return;
+    }
+    
+    // Verificar se a série existe (foi pelo menos iniciada)
+    if (indiceSerieAlvo >= state.treinoAtual.series.length) {
+      console.warn('Série ainda não foi iniciada:', numeroSerie);
+      return;
+    }
+    
+    console.log(`[ArcoTrackContext] Navegando para série ${numeroSerie} (índice ${indiceSerieAlvo})`);
+    
+    setState(prev => ({
+      ...prev,
+      serieAtual: indiceSerieAlvo,
+      flechaAtual: prev.treinoAtual?.series[indiceSerieAlvo]?.flechas.length || 0,
+    }));
+  };
+
   // Finish training
   const finalizarTreino = async (observacoes?: string, autoavaliacao?: Autoavaliacao) => {
     if (!state.treinoAtual || !treinoAtualId) return;
@@ -543,6 +589,10 @@ export function ArcoTrackProvider({ children }: { children: ReactNode }) {
       }));
 
       setTreinoAtualId(null);
+      
+      // Limpar treino salvo localmente já que foi finalizado
+      autoSave.clearSavedTraining();
+      console.log('[ArcoTrackContext] 🗑️ Auto-save limpo após finalização do treino');
 
       // Reload trainings to get updated data
       await treinosHook.loadTreinos();
@@ -608,6 +658,7 @@ export function ArcoTrackProvider({ children }: { children: ReactNode }) {
     registrarFlecha,
     editarFlecha,
     proximaSerie,
+    navegarParaSerie,
     finalizarTreino,
     resetTreinoAtual,
     carregarTreinos,

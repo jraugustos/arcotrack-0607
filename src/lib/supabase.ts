@@ -14,6 +14,8 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: true,
     detectSessionInUrl: true,
     flowType: 'pkce',
+    // Configurações para melhor persistência durante treinos longos
+    storageKey: 'arcotrack-auth',
   },
   global: {
     headers: {
