@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useArcoTrack, Flecha } from '../contexts/ArcoTrackContext';
 import { SeriesNavigation } from './SeriesNavigation';
 import { ChevronRight, SkipForward, X, Target as TargetIcon, Edit3, RotateCcw } from 'lucide-react';
@@ -11,11 +11,45 @@ export function TelaExecucao() {
   const [autoResetTimer, setAutoResetTimer] = useState<NodeJS.Timeout | null>(null);
   const [escalaZoom, setEscalaZoom] = useState(1);
   const [aguardandoSegundoToque, setAguardandoSegundoToque] = useState(false);
+  const [tamanhoAlvo, setTamanhoAlvo] = useState(280);
+  const [larguraTela, setLarguraTela] = useState(window.innerWidth);
   const alvoRef = useRef<SVGSVGElement>(null);
 
   if (!state.treinoAtual) return null;
 
   const { config } = state.treinoAtual;
+
+  // Calcular tamanho responsivo do alvo
+  const calcularTamanhoAlvo = (largura: number) => {
+    // Padding responsivo: px-2 (16px), sm:px-4 (32px), md:px-6 (48px)
+    const paddingLateral = largura < 640 ? 16 : largura < 768 ? 32 : 48;
+    const margemSeguranca = 20; // Margem extra para segurança
+    const espacoDisponivel = largura - paddingLateral - margemSeguranca;
+    
+    // Considerar zoom máximo (1.6x)
+    const tamanhoMaximoComZoom = espacoDisponivel / 1.6;
+    
+    // Tamanho mínimo para usabilidade e máximo original
+    const tamanhoMinimo = 200;
+    const tamanhoMaximo = 280;
+    
+    return Math.max(tamanhoMinimo, Math.min(tamanhoMaximo, tamanhoMaximoComZoom));
+  };
+
+  // Effect para monitorar mudanças no tamanho da tela
+  useEffect(() => {
+    const handleResize = () => {
+      const novaLargura = window.innerWidth;
+      setLarguraTela(novaLargura);
+      setTamanhoAlvo(calcularTamanhoAlvo(novaLargura));
+    };
+
+    // Calcular tamanho inicial
+    setTamanhoAlvo(calcularTamanhoAlvo(larguraTela));
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [larguraTela]);
   const serieAtual = state.treinoAtual.series[state.serieAtual] || { flechas: [], pontuacao: 0 };
   const flechasNaSerie = serieAtual.flechas?.length || 0;
   const flechasRestantes = Math.max(0, (config.flechasPorSerie || 0) - flechasNaSerie);
@@ -49,27 +83,30 @@ export function TelaExecucao() {
     serie.flechas.length >= config.flechasPorSerie
   );
 
-  // Função para calcular a pontuação baseada na distância do centro
+  // Função para calcular a pontuação baseada na distância do centro (proporcional ao tamanho)
   const calcularPontuacao = (x: number, y: number): number => {
     try {
       if (isNaN(x) || isNaN(y)) return 0;
       
-      const centerX = 140;
-      const centerY = 140;
+      const centerX = tamanhoAlvo / 2;
+      const centerY = tamanhoAlvo / 2;
       const distancia = Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2));
       
       if (isNaN(distancia)) return 0;
       
-      if (distancia <= 14) return 10;
-      if (distancia <= 27) return 9;
-      if (distancia <= 41) return 8;
-      if (distancia <= 54) return 7;
-      if (distancia <= 68) return 6;
-      if (distancia <= 81) return 5;
-      if (distancia <= 95) return 4;
-      if (distancia <= 108) return 3;
-      if (distancia <= 122) return 2;
-      if (distancia <= 135) return 1;
+      // Calcular raios proporcionais ao tamanho do alvo
+      const fatorEscala = tamanhoAlvo / 280; // 280 era o tamanho original
+      
+      if (distancia <= 14 * fatorEscala) return 10;
+      if (distancia <= 27 * fatorEscala) return 9;
+      if (distancia <= 41 * fatorEscala) return 8;
+      if (distancia <= 54 * fatorEscala) return 7;
+      if (distancia <= 68 * fatorEscala) return 6;
+      if (distancia <= 81 * fatorEscala) return 5;
+      if (distancia <= 95 * fatorEscala) return 4;
+      if (distancia <= 108 * fatorEscala) return 3;
+      if (distancia <= 122 * fatorEscala) return 2;
+      if (distancia <= 135 * fatorEscala) return 1;
       return 0;
     } catch (error) {
       console.error('Erro ao calcular pontuação:', error);
@@ -140,9 +177,9 @@ export function TelaExecucao() {
       const svg = event.currentTarget;
       const rect = svg.getBoundingClientRect();
       
-      // Cálculo de coordenadas considerando zoom
+      // Cálculo de coordenadas considerando zoom e tamanho responsivo
       const escalaAtual = zoomAtivo ? escalaZoom : 1;
-      const tamanhoBase = 280;
+      const tamanhoBase = tamanhoAlvo; // Usar tamanho responsivo
       const tamanhoAtual = tamanhoBase * escalaAtual;
       
       // Ajustar coordenadas para o centro do alvo quando há zoom
@@ -154,8 +191,8 @@ export function TelaExecucao() {
       
       console.log('Coordenadas calculadas:', { x, y, escalaAtual, zoomAtivo });
       
-      // Validação básica
-      if (x < 0 || x > 280 || y < 0 || y > 280) {
+      // Validação básica usando tamanho responsivo
+      if (x < 0 || x > tamanhoBase || y < 0 || y > tamanhoBase) {
         console.log('Coordenadas fora dos limites');
         return;
       }
@@ -240,14 +277,19 @@ export function TelaExecucao() {
 
   // Componente do alvo SVG reutilizável
   const AlvoSVG = ({ 
-    size = 280, 
+    size = tamanhoAlvo, 
     escala = 1,
     onTargetClick
   }: { 
     size?: number; 
     escala?: number;
     onTargetClick?: (event: React.MouseEvent<SVGSVGElement>) => void;
-  }) => (
+  }) => {
+    // Calcular raios proporcionais ao tamanho atual
+    const fatorEscala = size / 280;
+    const centerCoord = size / 2;
+    
+    return (
     <div 
       className="flex justify-center items-center"
       style={{ 
@@ -261,7 +303,7 @@ export function TelaExecucao() {
         ref={alvoRef}
         width={size}
         height={size}
-        viewBox="0 0 280 280"
+        viewBox={`0 0 ${size} ${size}`}
         className={`drop-shadow-lg ${onTargetClick ? 'cursor-crosshair' : ''} select-none`}
         onClick={onTargetClick}
         style={{ transition: 'transform 0.3s ease-in-out' }}
@@ -270,9 +312,9 @@ export function TelaExecucao() {
       
       {/* Anel externo (1 ponto) */}
       <circle
-        cx="140"
-        cy="140"
-        r="135"
+        cx={centerCoord}
+        cy={centerCoord}
+        r={135 * fatorEscala}
         fill={flechaSelecionada === 1 ? "#FFD66B" : "#D9D9D9"}
         stroke="#000000"
         strokeWidth="1"
@@ -280,9 +322,9 @@ export function TelaExecucao() {
       
       {/* Anel 2 pontos */}
       <circle
-        cx="140"
-        cy="140"
-        r="122"
+        cx={centerCoord}
+        cy={centerCoord}
+        r={122 * fatorEscala}
         fill={flechaSelecionada === 2 ? "#FFD66B" : "#D9D9D9"}
         stroke="#000000"
         strokeWidth="1"
@@ -290,9 +332,9 @@ export function TelaExecucao() {
       
       {/* Anel 3 pontos */}
       <circle
-        cx="140"
-        cy="140"
-        r="108"
+        cx={centerCoord}
+        cy={centerCoord}
+        r={108 * fatorEscala}
         fill={flechaSelecionada === 3 ? "#FFD66B" : "#434343"}
         stroke="#000000"
         strokeWidth="1"
@@ -300,9 +342,9 @@ export function TelaExecucao() {
       
       {/* Anel 4 pontos */}
       <circle
-        cx="140"
-        cy="140"
-        r="95"
+        cx={centerCoord}
+        cy={centerCoord}
+        r={95 * fatorEscala}
         fill={flechaSelecionada === 4 ? "#FFD66B" : "#434343"}
         stroke="#000000"
         strokeWidth="1"
@@ -310,9 +352,9 @@ export function TelaExecucao() {
       
       {/* Anel 5 pontos */}
       <circle
-        cx="140"
-        cy="140"
-        r="81"
+        cx={centerCoord}
+        cy={centerCoord}
+        r={81 * fatorEscala}
         fill={flechaSelecionada === 5 ? "#FFD66B" : "#4FA3D9"}
         stroke="#000000"
         strokeWidth="1"
@@ -320,9 +362,9 @@ export function TelaExecucao() {
       
       {/* Anel 6 pontos */}
       <circle
-        cx="140"
-        cy="140"
-        r="68"
+        cx={centerCoord}
+        cy={centerCoord}
+        r={68 * fatorEscala}
         fill={flechaSelecionada === 6 ? "#FFD66B" : "#4FA3D9"}
         stroke="#000000"
         strokeWidth="1"
@@ -330,9 +372,9 @@ export function TelaExecucao() {
       
       {/* Anel 7 pontos */}
       <circle
-        cx="140"
-        cy="140"
-        r="54"
+        cx={centerCoord}
+        cy={centerCoord}
+        r={54 * fatorEscala}
         fill={flechaSelecionada === 7 ? "#FFD66B" : "#F86B4F"}
         stroke="#000000"
         strokeWidth="1"
@@ -340,9 +382,9 @@ export function TelaExecucao() {
       
       {/* Anel 8 pontos */}
       <circle
-        cx="140"
-        cy="140"
-        r="41"
+        cx={centerCoord}
+        cy={centerCoord}
+        r={41 * fatorEscala}
         fill={flechaSelecionada === 8 ? "#FFD66B" : "#F86B4F"}
         stroke="#000000"
         strokeWidth="1"
@@ -350,9 +392,9 @@ export function TelaExecucao() {
       
       {/* Anel 9 pontos */}
       <circle
-        cx="140"
-        cy="140"
-        r="27"
+        cx={centerCoord}
+        cy={centerCoord}
+        r={27 * fatorEscala}
         fill={flechaSelecionada === 9 ? "#F5B041" : "#FFD66B"}
         stroke="#000000"
         strokeWidth="1"
@@ -360,31 +402,35 @@ export function TelaExecucao() {
       
       {/* Centro 10 pontos */}
       <circle
-        cx="140"
-        cy="140"
-        r="14"
+        cx={centerCoord}
+        cy={centerCoord}
+        r={14 * fatorEscala}
         fill={flechaSelecionada === 10 ? "#F5B041" : "#FFD66B"}
         stroke="#000000"
         strokeWidth="1"
       />
 
       {/* Linhas divisórias principais */}
-      <line x1="140" y1="5" x2="140" y2="275" stroke="#000000" strokeWidth="1" />
-      <line x1="5" y1="140" x2="275" y2="140" stroke="#000000" strokeWidth="1" />
+      <line x1={centerCoord} y1={5 * fatorEscala} x2={centerCoord} y2={size - 5 * fatorEscala} stroke="#000000" strokeWidth="1" />
+      <line x1={5 * fatorEscala} y1={centerCoord} x2={size - 5 * fatorEscala} y2={centerCoord} stroke="#000000" strokeWidth="1" />
 
       {/* Ponto central para mira */}
-      <circle cx="140" cy="140" r="2" fill="#000000" />
+      <circle cx={centerCoord} cy={centerCoord} r={2 * fatorEscala} fill="#000000" />
 
       {/* Mostrar flechas marcadas no alvo */}
       {serieAtual.flechas.map((flecha, index) => {
         if (flecha.x !== undefined && flecha.y !== undefined) {
+          // Converter coordenadas do sistema original (280) para o tamanho atual
+          const flechaX = (flecha.x / 280) * size;
+          const flechaY = (flecha.y / 280) * size;
+          
           return (
             <g key={index}>
               {/* Seta da flecha */}
               <circle
-                cx={flecha.x}
-                cy={flecha.y}
-                r="3"
+                cx={flechaX}
+                cy={flechaY}
+                r={3 * fatorEscala}
                 fill="#FF0000"
                 stroke="#FFFFFF"
                 strokeWidth="1"
@@ -396,10 +442,10 @@ export function TelaExecucao() {
               />
               {/* Número da flecha */}
               <text
-                x={flecha.x}
-                y={flecha.y + 12}
+                x={flechaX}
+                y={flechaY + 12 * fatorEscala}
                 textAnchor="middle"
-                fontSize="8"
+                fontSize={8 * fatorEscala}
                 fill="#FF0000"
                 fontWeight="bold"
                 className="pointer-events-none"
@@ -414,6 +460,7 @@ export function TelaExecucao() {
     </svg>
     </div>
   );
+  };
 
   return (
     <div className="min-h-screen bg-arco-light font-dm-sans flex flex-col">
@@ -484,7 +531,7 @@ export function TelaExecucao() {
       </div>
 
       {/* Alvo principal */}
-      <div className="px-6 flex-1 flex items-center justify-center">
+      <div className="px-2 sm:px-4 md:px-6 flex-1 flex items-center justify-center">
         <div className="relative">
           {/* Título do alvo */}
           <div className="text-center mb-4">
