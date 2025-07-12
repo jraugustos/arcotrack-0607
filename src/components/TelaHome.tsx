@@ -1,6 +1,7 @@
 import React from 'react';
 import { useArcoTrack } from '../contexts/ArcoTrackContext';
 import { Plus, Target, Calendar, TrendingUp, Award } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
 
 export function TelaHome() {
   const { state, navegarPara } = useArcoTrack();
@@ -14,7 +15,7 @@ export function TelaHome() {
   };
 
   const temTreinos = state.treinos.length > 0;
-  const ultimosTreinos = state.treinos.slice(-3).reverse();
+  const ultimosTreinos = state.treinos.slice(-5).reverse(); // Mostrar últimos 5 treinos
 
   // Calcular estatísticas
   const pontuacaoMedia = temTreinos 
@@ -30,6 +31,33 @@ export function TelaHome() {
     const agora = new Date();
     return dataT.getMonth() === agora.getMonth() && dataT.getFullYear() === agora.getFullYear();
   }).length;
+
+  // Preparar dados para o gráfico
+  const dadosGrafico = ultimosTreinos.map((treino, index) => ({
+    data: new Date(treino.data).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }),
+    pontuacao: treino.pontuacaoTotal,
+    series: treino.config.series,
+    distancia: treino.config.distancia,
+    dataCompleta: new Date(treino.data).toLocaleDateString('pt-BR')
+  }));
+
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+          <p className="font-medium text-arco-primary">{data.dataCompleta}</p>
+          <p className="text-sm text-arco-gray-700">
+            Pontuação: <span className="font-medium">{data.pontuacao}</span>
+          </p>
+          <p className="text-xs text-arco-gray-600">
+            {data.series} séries • {data.distancia}m
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <div className="min-h-screen bg-arco-secondary font-dm-sans">
@@ -77,29 +105,48 @@ export function TelaHome() {
               </div>
             </div>
 
-            {/* Gráfico simples dos últimos treinos */}
-            <div className="bg-white rounded-3xl p-4 border border-arco-gray-300/30">
+            {/* Gráfico dos últimos treinos */}
+            <div className="bg-white rounded-3xl p-6 border border-arco-gray-300/30">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-medium text-arco-primary">Últimos Treinos</h3>
+                <h3 className="text-xl font-medium text-arco-primary">Evolução dos Últimos Treinos</h3>
                 <TrendingUp className="w-6 h-6 text-arco-gray-500" />
               </div>
               
-              <div className="flex items-end justify-between h-28 space-x-3">
-                {ultimosTreinos.map((treino, index) => {
-                  const altura = (treino.pontuacaoTotal / melhorPontuacao) * 100;
-                  return (
-                    <div key={treino.id} className="flex-1 flex flex-col items-center">
-                      <div 
-                        className="w-full bg-accent-gradient rounded-t-xl"
-                        style={{ height: `${altura}%` }}
-                      ></div>
-                      <div className="text-xs text-arco-gray-700 font-light mt-2">
-                        {new Date(treino.data).getDate()}/{new Date(treino.data).getMonth() + 1}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+              {dadosGrafico.length > 0 ? (
+                <div className="h-48">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={dadosGrafico} margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
+                      <XAxis 
+                        dataKey="data" 
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fontSize: 12, fill: '#6B7280' }}
+                      />
+                      <YAxis 
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fontSize: 12, fill: '#6B7280' }}
+                      />
+                      <Tooltip content={<CustomTooltip />} />
+                      <Bar 
+                        dataKey="pontuacao" 
+                        radius={[8, 8, 0, 0]}
+                        fill="url(#gradientBar)"
+                      />
+                      <defs>
+                        <linearGradient id="gradientBar" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#43c6ac" />
+                          <stop offset="100%" stopColor="#f8ffae" />
+                        </linearGradient>
+                      </defs>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <div className="h-48 flex items-center justify-center text-arco-gray-500">
+                  <p>Dados insuficientes para o gráfico</p>
+                </div>
+              )}
             </div>
 
             {/* Lista dos últimos treinos */}
@@ -115,7 +162,7 @@ export function TelaHome() {
               </div>
               
               <div className="space-y-4">
-                {ultimosTreinos.map((treino) => (
+                {state.treinos.slice(-3).reverse().map((treino) => (
                   <div key={treino.id} className="flex items-center justify-between p-4 bg-arco-gray-100 rounded-2xl hover:bg-arco-gray-300/30 transition-colors">
                     <div>
                       <div className="font-medium text-arco-primary">
