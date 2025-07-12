@@ -302,6 +302,8 @@ export function ArcoTrackProvider({ children }: { children: ReactNode }) {
   // Navigation
   const navegarPara = (tela: string) => {
     setState(prev => ({ ...prev, telaAtual: tela }));
+    // Scroll para o topo sempre que trocar de página
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Start training

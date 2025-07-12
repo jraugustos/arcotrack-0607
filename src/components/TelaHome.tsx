@@ -115,7 +115,7 @@ export function TelaHome() {
               {dadosGrafico.length > 0 ? (
                 <div className="h-48">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={dadosGrafico} margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
+                    <BarChart data={dadosGrafico} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
                       <XAxis 
                         dataKey="data" 
                         axisLine={false}
