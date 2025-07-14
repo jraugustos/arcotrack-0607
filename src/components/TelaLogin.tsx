@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuthContext } from '../contexts/AuthContext';
-import { LogIn, Mail, Lock, User, Loader2 } from 'lucide-react';
+import { LogIn, Mail, Lock, User, Loader2, Eye, EyeOff } from 'lucide-react';
 
 export function TelaLogin() {
   const { signInWithEmail, signUpWithEmail, loading } = useAuthContext();
@@ -10,6 +10,7 @@ export function TelaLogin() {
   const [nome, setNome] = useState('');
   const [erro, setErro] = useState('');
   const [carregando, setCarregando] = useState(false);
+  const [mostrarSenha, setMostrarSenha] = useState(false);
 
   const fazerLogin = async () => {
     if (!email || !senha) {
@@ -95,23 +96,25 @@ export function TelaLogin() {
                 className="w-full pl-12 pr-4 py-5 bg-white border border-arco-gray-300 rounded-2xl focus:outline-none focus:border-arco-accent focus:ring-2 focus:ring-arco-accent/20 transition-all duration-200 font-medium"
               />
             </div>
-            {mostrarCadastro && (
-              <p className="text-xs text-arco-gray-600 px-2">
-                💡 Use emails como: seuemail@arcotrack.com ou similar
-              </p>
-            )}
           </div>
 
           {/* Senha */}
           <div className="relative">
             <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-arco-gray-500 w-5 h-5" />
             <input
-              type="password"
+              type={mostrarSenha ? "text" : "password"}
               placeholder="Senha"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
               className="w-full pl-12 pr-4 py-5 bg-white border border-arco-gray-300 rounded-2xl focus:outline-none focus:border-arco-accent focus:ring-2 focus:ring-arco-accent/20 transition-all duration-200 font-medium"
             />
+            <button
+              type="button"
+              onClick={() => setMostrarSenha(!mostrarSenha)}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-arco-gray-500 hover:text-arco-primary focus:outline-none"
+            >
+              {mostrarSenha ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            </button>
           </div>
 
           {/* Mensagem de erro */}

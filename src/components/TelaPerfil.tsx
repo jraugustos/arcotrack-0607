@@ -9,6 +9,7 @@ export function TelaPerfil() {
   const { user } = useAuthContext();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
   const [formData, setFormData] = useState({
@@ -233,14 +234,25 @@ export function TelaPerfil() {
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-arco-gray-400" />
                 <input
-                  type="password"
+                  type={showNewPassword ? 'text' : 'password'}
                   value={formData.novaSenha}
                   onChange={(e) => handleInputChange('novaSenha', e.target.value)}
-                  className={`w-full pl-10 pr-4 py-3 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-accent-gradient/20 ${
+                  className={`w-full pl-10 pr-12 py-3 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-accent-gradient/20 ${
                     errors.novaSenha ? 'border-red-300' : 'border-arco-gray-300'
                   }`}
                   placeholder="Nova senha (mínimo 6 caracteres)"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                >
+                  {showNewPassword ? (
+                    <EyeOff className="w-5 h-5 text-arco-gray-400" />
+                  ) : (
+                    <Eye className="w-5 h-5 text-arco-gray-400" />
+                  )}
+                </button>
               </div>
               {errors.novaSenha && <p className="text-red-500 text-sm mt-1">{errors.novaSenha}</p>}
             </div>
