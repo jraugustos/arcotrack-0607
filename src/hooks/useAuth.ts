@@ -487,7 +487,7 @@ export const useAuth = () => {
           data: {
             name: name,
           },
-          // Esta opção tenta não exigir confirmação de email
+          // Configurações para evitar confirmação de email
           emailRedirectTo: undefined,
         },
       });
@@ -499,12 +499,12 @@ export const useAuth = () => {
 
       // Se a configuração para desabilitar confirmação estiver ativa e o usuário foi criado
       if (disableEmailConfirmation && data.user) {
-        console.log('Conta criada, confirmando automaticamente...');
+        console.log('Conta criada, tentando confirmação automática...');
         
         try {
           // Criar cliente com service role para confirmar usuário
           const serviceRoleKey = import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
-          if (serviceRoleKey) {
+          if (serviceRoleKey && serviceRoleKey !== 'your_service_role_key_here') {
             const adminClient = createClient(
               import.meta.env.VITE_SUPABASE_URL,
               serviceRoleKey
@@ -524,11 +524,15 @@ export const useAuth = () => {
             } else {
               console.log('Usuário confirmado automaticamente com sucesso');
             }
+          } else {
+            console.log('Service role key não configurada. Configure no dashboard do Supabase ou adicione a chave ao .env');
           }
         } catch (confirmError) {
           console.log('Erro na confirmação automática:', confirmError);
         }
       }
+      
+      console.log('Registro realizado com sucesso. Usuário:', data.user?.email);
 
     } catch (error) {
       console.error('SignUpWithEmail error:', error);
