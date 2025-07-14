@@ -170,7 +170,7 @@ export function TelaAutoavaliacao() {
         </div>
       </div>
 
-      <div className="px-6 py-6 space-y-6">
+      <div className="px-6 py-6 pb-32 space-y-6">
         {/* Resumo da avaliação */}
         <div className="bg-arco-white rounded-arco p-6">
           <div className="grid grid-cols-3 gap-4 text-center">
@@ -302,25 +302,23 @@ export function TelaAutoavaliacao() {
             rows={4}
           />
         </div>
-
-        {/* Botão de salvar */}
-        <div className="pb-6">
-          <button
-            onClick={salvarEConcluir}
-            disabled={loading}
-            className="w-full bg-arco-yellow text-arco-navy font-semibold py-4 rounded-arco hover:bg-arco-orange transition-colors flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
-            ) : (
-              <Save className="w-5 h-5" />
-            )}
-            <span>Salvar e Concluir</span>
-          </button>
-        </div>
       </div>
 
-
+      {/* Botão de salvar fixo no bottom */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-arco-gray-200 p-4">
+        <button
+          onClick={salvarEConcluir}
+          disabled={loading}
+          className="w-full bg-accent-gradient text-black font-bold py-4 rounded-2xl hover:opacity-90 transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? (
+            <Loader2 className="w-5 h-5 animate-spin" />
+          ) : (
+            <Save className="w-5 h-5" />
+          )}
+          <span>Salvar e Concluir</span>
+        </button>
+      </div>
     </div>
   );
 }

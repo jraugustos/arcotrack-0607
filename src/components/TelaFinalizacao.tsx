@@ -59,7 +59,7 @@ export function TelaFinalizacao() {
         </div>
       </div>
 
-      <div className="px-6 py-6 space-y-6">
+      <div className="px-6 py-6 pb-32 space-y-6">
         {/* Pontuação principal */}
         <div className="bg-arco-white rounded-arco p-6 text-center">
           <div className="text-4xl font-bold text-arco-navy mb-2">{pontuacaoTotal}</div>
@@ -134,24 +134,6 @@ export function TelaFinalizacao() {
 
 
 
-        {/* Botões de ação */}
-        <div className="space-y-3">
-          <button
-            onClick={irParaAutoavaliacao}
-            className="w-full bg-arco-yellow text-arco-navy font-semibold py-4 rounded-arco hover:bg-arco-orange transition-colors flex items-center justify-center space-x-2"
-          >
-            <span>Autoavaliar Processo</span>
-            <ChevronRight className="w-5 h-5" />
-          </button>
-          
-          <button
-            onClick={finalizarSemAutoavaliacao}
-            className="w-full bg-arco-white border-2 border-arco-light text-arco-gray font-semibold py-4 rounded-arco hover:border-arco-gray transition-colors"
-          >
-            Salvar e Concluir
-          </button>
-        </div>
-
         {/* Análise das séries */}
         <div className="bg-arco-white rounded-arco p-6">
           <h3 className="font-semibold text-arco-navy mb-4">Detalhes por Série</h3>
@@ -182,6 +164,24 @@ export function TelaFinalizacao() {
             ))}
           </div>
         </div>
+      </div>
+
+      {/* Botões de ação fixos no bottom */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-arco-gray-200 p-4 space-y-3">
+        <button
+          onClick={irParaAutoavaliacao}
+          className="w-full bg-arco-yellow text-arco-navy font-semibold py-4 rounded-arco hover:bg-arco-orange transition-colors flex items-center justify-center space-x-2"
+        >
+          <span>Autoavaliar Processo</span>
+          <ChevronRight className="w-5 h-5" />
+        </button>
+        
+        <button
+          onClick={finalizarSemAutoavaliacao}
+          className="w-full bg-accent-gradient text-black font-bold py-4 rounded-2xl hover:opacity-90 transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg"
+        >
+          <span>Salvar e Concluir</span>
+        </button>
       </div>
     </div>
   );
