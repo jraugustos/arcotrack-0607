@@ -27,10 +27,19 @@ export function TelaHome() {
   const cancelarTreino = async () => {
     if (state.treinoAtual) {
       try {
+        console.log('[TelaHome] Cancelando treino:', state.treinoAtual.id);
+        
         // Deletar treino da base de dados
         await deleteTreino(state.treinoAtual.id);
+        
         // Limpar estado atual
         resetTreinoAtual();
+        
+        // Limpar localStorage (caso tenha dados salvos)
+        localStorage.removeItem('arcotrack-current-training');
+        localStorage.removeItem('arcotrack-training-metadata');
+        
+        console.log('[TelaHome] Treino cancelado e removido completamente');
       } catch (error) {
         console.error('Erro ao cancelar treino:', error);
       }
@@ -163,7 +172,7 @@ export function TelaHome() {
               </button>
               <button
                 onClick={cancelarTreino}
-                className="bg-red-500 text-white p-3 rounded-2xl hover:bg-red-600 transition-colors flex items-center justify-center"
+                className="bg-white text-black p-3 rounded-2xl hover:bg-gray-100 transition-colors flex items-center justify-center border border-gray-200"
                 title="Cancelar Treino"
               >
                 <X className="w-5 h-5" />
