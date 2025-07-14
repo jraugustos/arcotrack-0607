@@ -85,18 +85,18 @@ export function TelaHome() {
       <div className="px-4 py-8 space-y-8">
         {/* Card de Treino em Andamento */}
         {treinoEmAndamento && (
-          <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-3xl p-6 text-white shadow-lg">
+          <div className="bg-accent-gradient rounded-3xl p-6 text-black shadow-lg">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                <div className="w-12 h-12 bg-black/10 rounded-full flex items-center justify-center">
                   <Play className="w-6 h-6" />
                 </div>
                 <div>
                   <h3 className="font-bold text-lg">Treino em Andamento</h3>
-                  <p className="text-white/80 text-sm">Continue de onde parou</p>
+                  <p className="text-black/70 text-sm">Continue de onde parou</p>
                 </div>
               </div>
-              <Clock className="w-6 h-6 text-white/80" />
+              <Clock className="w-6 h-6 text-black/70" />
             </div>
             
             {/* Informações do treino */}
@@ -112,9 +112,9 @@ export function TelaHome() {
                   <span>Série {state.serieAtual + 1} de {state.treinoAtual!.config.series}</span>
                   <span>{Math.round(((state.serieAtual) / state.treinoAtual!.config.series) * 100)}%</span>
                 </div>
-                <div className="w-full bg-white/20 rounded-full h-2">
+                <div className="w-full bg-black/10 rounded-full h-2">
                   <div 
-                    className="bg-white rounded-full h-2 transition-all duration-300" 
+                    className="bg-black rounded-full h-2 transition-all duration-300" 
                     style={{ width: `${((state.serieAtual) / state.treinoAtual!.config.series) * 100}%` }}
                   ></div>
                 </div>
@@ -124,17 +124,17 @@ export function TelaHome() {
               <div className="grid grid-cols-3 gap-3 text-center">
                 <div>
                   <div className="text-xl font-bold">{state.treinoAtual!.pontuacaoTotal}</div>
-                  <div className="text-xs text-white/80">Pontos</div>
+                  <div className="text-xs text-black/70">Pontos</div>
                 </div>
                 <div>
                   <div className="text-xl font-bold">{state.treinoAtual!.series.length}</div>
-                  <div className="text-xs text-white/80">Séries</div>
+                  <div className="text-xs text-black/70">Séries</div>
                 </div>
                 <div>
                   <div className="text-xl font-bold">
                     {state.treinoAtual!.series.reduce((acc, s) => acc + s.flechas.length, 0)}
                   </div>
-                  <div className="text-xs text-white/80">Flechas</div>
+                  <div className="text-xs text-black/70">Flechas</div>
                 </div>
               </div>
             </div>
@@ -142,7 +142,7 @@ export function TelaHome() {
             {/* Botão continuar */}
             <button
               onClick={continuarTreino}
-              className="w-full bg-white text-orange-600 font-bold py-3 rounded-2xl flex items-center justify-center space-x-2 hover:bg-gray-50 transition-colors"
+              className="w-full bg-black text-white font-bold py-3 rounded-2xl flex items-center justify-center space-x-2 hover:bg-black/90 transition-colors"
             >
               <span>Continuar Treino</span>
               <ArrowRight className="w-5 h-5" />
