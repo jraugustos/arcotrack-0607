@@ -1,10 +1,10 @@
 import React from 'react';
 import { useArcoTrack } from '../contexts/ArcoTrackContext';
-import { Plus, Target, Calendar, TrendingUp, Award, Play, Clock, ArrowRight } from 'lucide-react';
+import { Plus, Target, Calendar, TrendingUp, Award, Play, Clock, ArrowRight, X } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
 
 export function TelaHome() {
-  const { state, navegarPara } = useArcoTrack();
+  const { state, navegarPara, deleteTreino, resetTreinoAtual } = useArcoTrack();
 
   const irParaNovoTreino = () => {
     navegarPara('registro');
@@ -22,6 +22,19 @@ export function TelaHome() {
   
   const continuarTreino = () => {
     navegarPara('execucao');
+  };
+
+  const cancelarTreino = async () => {
+    if (state.treinoAtual) {
+      try {
+        // Deletar treino da base de dados
+        await deleteTreino(state.treinoAtual.id);
+        // Limpar estado atual
+        resetTreinoAtual();
+      } catch (error) {
+        console.error('Erro ao cancelar treino:', error);
+      }
+    }
   };
 
   // Calcular estatísticas
@@ -139,14 +152,23 @@ export function TelaHome() {
               </div>
             </div>
             
-            {/* Botão continuar */}
-            <button
-              onClick={continuarTreino}
-              className="w-full bg-black text-white font-bold py-3 rounded-2xl flex items-center justify-center space-x-2 hover:bg-black/90 transition-colors"
-            >
-              <span>Continuar Treino</span>
-              <ArrowRight className="w-5 h-5" />
-            </button>
+            {/* Botões de controle */}
+            <div className="flex space-x-3">
+              <button
+                onClick={continuarTreino}
+                className="flex-1 bg-black text-white font-bold py-3 rounded-2xl flex items-center justify-center space-x-2 hover:bg-black/90 transition-colors"
+              >
+                <span>Continuar Treino</span>
+                <ArrowRight className="w-5 h-5" />
+              </button>
+              <button
+                onClick={cancelarTreino}
+                className="bg-red-500 text-white p-3 rounded-2xl hover:bg-red-600 transition-colors flex items-center justify-center"
+                title="Cancelar Treino"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
           </div>
         )}
 
