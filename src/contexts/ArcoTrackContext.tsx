@@ -220,7 +220,7 @@ export function ArcoTrackProvider({ children }: { children: ReactNode }) {
       
       if (treinoSalvo && !treinoSalvo.concluido) {
         console.log('[ArcoTrackContext] 🔄 Treino incompleto encontrado, recuperando...');
-        telaDestino = 'execucao';
+        telaDestino = 'home';
         
         setState(prev => ({
           ...prev,

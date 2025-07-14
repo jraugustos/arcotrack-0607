@@ -1,6 +1,6 @@
 import React from 'react';
 import { useArcoTrack } from '../contexts/ArcoTrackContext';
-import { Plus, Target, Calendar, TrendingUp, Award } from 'lucide-react';
+import { Plus, Target, Calendar, TrendingUp, Award, Play, Clock, ArrowRight } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
 
 export function TelaHome() {
@@ -16,6 +16,13 @@ export function TelaHome() {
 
   const temTreinos = state.treinos.length > 0;
   const ultimosTreinos = state.treinos.slice(-5).reverse(); // Mostrar últimos 5 treinos
+
+  // Verificar se há treino em andamento
+  const treinoEmAndamento = state.treinoAtual && !state.treinoAtual.concluido;
+  
+  const continuarTreino = () => {
+    navegarPara('execucao');
+  };
 
   // Calcular estatísticas
   const pontuacaoMedia = temTreinos 
@@ -76,6 +83,73 @@ export function TelaHome() {
       </div>
 
       <div className="px-4 py-8 space-y-8">
+        {/* Card de Treino em Andamento */}
+        {treinoEmAndamento && (
+          <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-3xl p-6 text-white shadow-lg">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                  <Play className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg">Treino em Andamento</h3>
+                  <p className="text-white/80 text-sm">Continue de onde parou</p>
+                </div>
+              </div>
+              <Clock className="w-6 h-6 text-white/80" />
+            </div>
+            
+            {/* Informações do treino */}
+            <div className="mb-4">
+              <div className="flex justify-between text-sm mb-2">
+                <span>Data: {new Date(state.treinoAtual!.data).toLocaleDateString('pt-BR')}</span>
+                <span>{state.treinoAtual!.config.distancia}m</span>
+              </div>
+              
+              {/* Progresso */}
+              <div className="mb-3">
+                <div className="flex justify-between text-xs mb-1">
+                  <span>Série {state.serieAtual + 1} de {state.treinoAtual!.config.series}</span>
+                  <span>{Math.round(((state.serieAtual) / state.treinoAtual!.config.series) * 100)}%</span>
+                </div>
+                <div className="w-full bg-white/20 rounded-full h-2">
+                  <div 
+                    className="bg-white rounded-full h-2 transition-all duration-300" 
+                    style={{ width: `${((state.serieAtual) / state.treinoAtual!.config.series) * 100}%` }}
+                  ></div>
+                </div>
+              </div>
+              
+              {/* Estatísticas */}
+              <div className="grid grid-cols-3 gap-3 text-center">
+                <div>
+                  <div className="text-xl font-bold">{state.treinoAtual!.pontuacaoTotal}</div>
+                  <div className="text-xs text-white/80">Pontos</div>
+                </div>
+                <div>
+                  <div className="text-xl font-bold">{state.treinoAtual!.series.length}</div>
+                  <div className="text-xs text-white/80">Séries</div>
+                </div>
+                <div>
+                  <div className="text-xl font-bold">
+                    {state.treinoAtual!.series.reduce((acc, s) => acc + s.flechas.length, 0)}
+                  </div>
+                  <div className="text-xs text-white/80">Flechas</div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Botão continuar */}
+            <button
+              onClick={continuarTreino}
+              className="w-full bg-white text-orange-600 font-bold py-3 rounded-2xl flex items-center justify-center space-x-2 hover:bg-gray-50 transition-colors"
+            >
+              <span>Continuar Treino</span>
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          </div>
+        )}
+
         {temTreinos ? (
           <>
             {/* Estatísticas */}
